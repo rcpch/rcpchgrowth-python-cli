@@ -6,7 +6,7 @@ from rcpchgrowth.centile_bands import centile_band_for_centile
 from rcpchgrowth.global_functions import centile, measurement_from_sds, sds_for_measurement
 
 @click.group()
-def cli():
+def methods():
     pass
 
 @click.command()
@@ -76,9 +76,9 @@ def measurement(reference: str, decimal_age: float, sex:str, measurement_method:
     click.echo(f"SDS {sds}\n {measurement_method}: {result} {suffix}")
 
 
-cli.add_command(age_calculation)
-cli.add_command(sds)
-cli.add_command(measurement)
+methods.add_command(age_calculation)
+methods.add_command(sds)
+methods.add_command(measurement)
 
-if __name__ == 'main':
-    cli()
+if __name__ == '__main__':
+    methods()
