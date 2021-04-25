@@ -17,7 +17,7 @@ setup(
         long_description = long_description,
         long_description_content_type ="text/markdown",
         # packages = find_packages(),
-        packages=['cli'],
+        packages=find_packages(),
         entry_points ={
             'console_scripts': [
                 'rcpchgrowth-cli = cli.__main__:methods'
