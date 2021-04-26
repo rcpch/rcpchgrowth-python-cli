@@ -29,7 +29,6 @@ def age_calculation(birth_date: datetime, observation_date: datetime, gestation_
     click.echo("Calculates decimal age, either chronological or corrected for gestation if the adjustment flag is true. Params: birth_date, observation_date, gestation_weeks, gestation_days")
     decimal_age=0
     calendar_age=""
-    print(birth_date)
     if adjustment:
         decimal_age=date_calculations.corrected_decimal_age(
             birth_date=datetime.strptime(birth_date, "%Y-%m-%d").date(),
@@ -47,7 +46,7 @@ def age_calculation(birth_date: datetime, observation_date: datetime, gestation_
         calendar_age=date_calculations.chronological_calendar_age(
             birth_date=datetime.strptime(birth_date, "%Y-%m-%d").date(),
             observation_date=datetime.strptime(observation_date,"%Y-%m-%d").date())
-    click.echo(f"{decimal_age} y,\n {calendar_age}")
+    click.echo(f"{round(decimal_age,1)} y,\n {calendar_age}")
 
 @click.command()
 @click.option('--reference', '-r', default="uk-who", show_default=True, type=click.Choice(["uk-who", "trisomy-21", "turners-syndrome"], case_sensitive=True))
@@ -67,7 +66,7 @@ def sds(reference: str, decimal_age: float, measurement_method: str, observation
         sex=sex
     )
     cent = centile(result)
-    click.echo(f"SDS: {result}\nCentile: {cent}\n ")
+    click.echo(f"SDS: {round(result,3)}\nCentile: {round(cent,1)} %\n")
 
 @click.command()
 @click.option('--reference', '-r', default="uk-who", show_default=True, type=click.Choice(["uk-who", "trisomy-21", "turners-syndrome"], case_sensitive=True))
@@ -86,13 +85,13 @@ def measurement(reference: str, decimal_age: float, sex: str, measurement_method
         sex=sex,
         age=decimal_age
     )
-    cent = centile(result)
+    cent = centile(sds)
     suffix="cm"
     if measurement_method=="weight":
         suffix="kg"
     elif measurement_method=="bmi":
         suffix="kg/m2"
-    click.echo(f"SDS {sds}\nCentile: {cent}\n{measurement_method}: {result} {suffix}")
+    click.echo(f"SDS {sds}\nCentile: {round(cent,3)} %\n{measurement_method}: {result} {suffix}")
 
 fig = pyfiglet.Figlet(font="standard")
 click.echo(fig.renderText("RCPCHGrowth"))
