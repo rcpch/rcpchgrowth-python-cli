@@ -9,18 +9,17 @@ long_description = 'Calculate SDS and centiles using \
   
 setup(
         name ='rcpchgrowth-python-cli',
-        version ='1.0.4',
+        version ='1.0.5',
         author ='Simon Chapman',
         author_email ='eatyourpeasapps@gmail.com',
         url ='https://github.com/rcpch/rcpchgrowth-python-cli',
         description ='Command Line Interface for RCPCHGrowth.',
         long_description = long_description,
         long_description_content_type ="text/markdown",
-        # packages = find_packages(),
         packages=find_packages(),
         entry_points ={
             'console_scripts': [
-                'rcpchgrowth-cli = cli.__main__:methods'
+                'rcpchgrowth = cli.__main__:methods'
             ]
         },
         classifiers =(
