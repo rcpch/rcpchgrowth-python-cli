@@ -46,7 +46,7 @@ def age_calculation(birth_date: datetime, observation_date: datetime, gestation_
         calendar_age=date_calculations.chronological_calendar_age(
             birth_date=datetime.strptime(birth_date, "%Y-%m-%d").date(),
             observation_date=datetime.strptime(observation_date,"%Y-%m-%d").date())
-    click.echo(f"{round(decimal_age,1)} y,\n {calendar_age}")
+    click.echo(f"{decimal_age} y,\n {calendar_age}")
 
 @click.command()
 @click.option('--reference', '-r', default="uk-who", show_default=True, type=click.Choice(["uk-who", "trisomy-21", "turners-syndrome"], case_sensitive=True))
@@ -66,7 +66,7 @@ def sds(reference: str, decimal_age: float, measurement_method: str, observation
         sex=sex
     )
     cent = centile(result)
-    click.echo(f"SDS: {round(result,3)}\nCentile: {round(cent,1)} %\n")
+    click.echo(f"SDS: {result}\nCentile: {round(cent,1)} %\n")
 
 @click.command()
 @click.option('--reference', '-r', default="uk-who", show_default=True, type=click.Choice(["uk-who", "trisomy-21", "turners-syndrome"], case_sensitive=True))
