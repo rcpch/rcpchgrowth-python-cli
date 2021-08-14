@@ -9,7 +9,7 @@ long_description = 'Calculate SDS and centiles using \
   
 setup(
         name ='rcpchgrowth-python-cli',
-        version ='1.1.0',
+        version='1.1.0',
         author ='Simon Chapman',
         author_email ='eatyourpeasapps@gmail.com',
         url ='https://github.com/rcpch/rcpchgrowth-python-cli',
