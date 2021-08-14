@@ -2,7 +2,7 @@ import click
 from datetime import datetime, date
 from scipy import stats
 from rcpchgrowth import date_calculations
-from rcpchgrowth.global_functions import centile, measurement_from_sds, sds_for_measurement as sfm
+from rcpchgrowth.global_functions import centile, measurement_from_sds, sds_for_measurement as sfm, mid_parental_height
 import pyfiglet
 
 @click.group()
@@ -127,7 +127,7 @@ def measurement_for_centile(decimal_age, sex, measurement_method, centile, refer
 @click.option('--reference', '-r', default="uk-who", show_default=True, type=click.Choice(["uk-who", "trisomy-21", "turners-syndrome"], case_sensitive=True))
 def measurement_for_sds(reference, decimal_age, sex, measurement_method, sds):
     """
-    Returns a measurement for a give SDS\n
+    Returns a measurement for a given SDS\n
     Parameters include decimal age as a float, 
     measurement method as one of 'height', 'weight', 'bmi', 'ofc' (head circumference),
     sex as one of 'male' or 'female' (default 'male').
@@ -149,6 +149,26 @@ def measurement_for_sds(reference, decimal_age, sex, measurement_method, sds):
         suffix="kg/m2"
     click.echo(f"Reference: {reference_to_string(reference)}")
     click.echo(f"SDS {sds}\nCentile: {round(cent,3)} %\n{measurement_method}: {result} {suffix}")
+
+@click.command()
+@click.argument("maternal_height", type=click.FLOAT)
+@click.argument("paternal_height", type=click.FLOAT)
+@click.argument('sex', default="male", type=click.Choice(['male', 'female'], case_sensitive=True))
+def midparental_height(maternal_height: float, paternal_height: float, sex: str)->str:
+    """
+    Returns a midparental height
+    Parameters include paternal_height in cm, maternal_height in cm and sex as one of 'male' or 'female' (default 'male').
+    """
+    result = None
+    try:
+        result = mid_parental_height(
+            height_paternal=paternal_height,
+            height_maternal=maternal_height,
+            sex=sex
+        )
+    except Exception as e:
+        return f"Error: {e}"
+    click.echo(f"Midparental height: {round(result, 2)} cm")
 
 fig = pyfiglet.Figlet(font="standard")
 click.echo(fig.renderText("RCPCHGrowth"))
