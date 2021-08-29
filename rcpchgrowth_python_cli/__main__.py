@@ -51,7 +51,6 @@ def age_calculation (birth_date, observation_date, gestation_weeks, gestation_da
             birth_date=birth_date,
             observation_date=observation_date)
         click.echo(f"Unadjusted: {decimal_age} y,\n{calendar_age}")
-    
 
 @click.command()
 @click.argument('decimal_age', type=click.FLOAT)
@@ -154,7 +153,7 @@ def measurement_for_sds(reference, decimal_age, sex, measurement_method, sds):
 @click.argument("maternal_height", type=click.FLOAT)
 @click.argument("paternal_height", type=click.FLOAT)
 @click.argument('sex', default="male", type=click.Choice(['male', 'female'], case_sensitive=True))
-def midparental_height(maternal_height: float, paternal_height: float, sex: str)->str:
+def midparental_height(maternal_height: float, paternal_height: float, sex: str):
     """
     Returns a midparental height
     Parameters include paternal_height in cm, maternal_height in cm and sex as one of 'male' or 'female' (default 'male').
@@ -170,12 +169,15 @@ def midparental_height(maternal_height: float, paternal_height: float, sex: str)
         return f"Error: {e}"
     click.echo(f"Midparental height: {round(result, 2)} cm")
 
+
 fig = pyfiglet.Figlet(font="standard")
 click.echo(fig.renderText("RCPCHGrowth"))
 methods.add_command(age_calculation)
 methods.add_command(sds_for_measurement)
 methods.add_command(measurement_for_centile)
 methods.add_command(measurement_for_sds)
+methods.add_command(midparental_height)
+
 
 if __name__ == '__main__':
     methods()
