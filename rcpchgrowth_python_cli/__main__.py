@@ -1,9 +1,14 @@
+# standard imports
+from datetime import date
+
+# third party imports
 import click
-from datetime import datetime, date
+import pyfiglet
 from scipy import stats
+
+# RCPCH imports
 from rcpchgrowth import date_calculations
 from rcpchgrowth.global_functions import centile, measurement_from_sds, sds_for_measurement as sfm, mid_parental_height
-import pyfiglet
 
 @click.group()
 def methods():
