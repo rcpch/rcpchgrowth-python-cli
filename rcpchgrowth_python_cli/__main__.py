@@ -1,9 +1,20 @@
+"""
+RCPCHGrowth Command Line Tool
+"""
+
+
+# standard imports
+from datetime import date
+
+# third party imports
 import click
-from datetime import datetime, date
+import pyfiglet
 from scipy import stats
+
+# RCPCH imports
 from rcpchgrowth import date_calculations
 from rcpchgrowth.global_functions import centile, measurement_from_sds, sds_for_measurement as sfm, mid_parental_height
-import pyfiglet
+
 
 @click.group()
 def methods():
@@ -13,15 +24,16 @@ def methods():
     """
     pass
 
+
 @click.command()
 @click.argument('birth_date', type=click.DateTime(formats=['%Y-%m-%d']),
-              default=str(date.today()))
+                default=str(date.today()))
 @click.argument('observation_date', type=click.DateTime(formats=['%Y-%m-%d']),
-              default=str(date.today()))
+                default=str(date.today()))
 @click.argument('gestation_weeks', type=click.INT, default=40, required=False)
 @click.argument('gestation_days', type=click.INT, default=0, required=False)
 @click.option('--adjustment', '-a', is_flag=True, default=False, help="Include if adjusting for gestational age.")
-def age_calculation (birth_date, observation_date, gestation_weeks, gestation_days, adjustment):
+def age_calculation(birth_date, observation_date, gestation_weeks, gestation_days, adjustment):
     """
     Calculates decimal age, either chronological or corrected for gestation if the adjustment flag is true.\n
     Essential parameters are birth_date [format YY-M-DD], 
@@ -31,26 +43,31 @@ def age_calculation (birth_date, observation_date, gestation_weeks, gestation_da
     If correction is required, supply the gestation and the --adjustment flag
     """
     click.echo("Calculates decimal age, either chronological or corrected for gestation if the adjustment flag is true. Params: birth_date, observation_date, gestation_weeks, gestation_days")
-    decimal_age=0
-    calendar_age=""
+    decimal_age = 0
+    calendar_age = ""
     if adjustment:
-        decimal_age=date_calculations.corrected_decimal_age(
+        decimal_age = date_calculations.corrected_decimal_age(
             birth_date=birth_date,
             observation_date=observation_date,
             gestation_weeks=gestation_weeks,
             gestation_days=gestation_days)
-        calendar_age=date_calculations.chronological_calendar_age(
+        corrected_birth_date = date_calculations.estimated_date_delivery(
             birth_date=birth_date,
+            gestation_weeks=gestation_weeks,
+            gestation_days=gestation_days)
+        calendar_age = date_calculations.chronological_calendar_age(
+            birth_date=corrected_birth_date,
             observation_date=observation_date)
         click.echo(f"Adjusted: {decimal_age} y,\n{calendar_age}")
     else:
-        decimal_age=date_calculations.chronological_decimal_age(
+        decimal_age = date_calculations.chronological_decimal_age(
             birth_date=birth_date,
             observation_date=observation_date)
-        calendar_age=date_calculations.chronological_calendar_age(
+        calendar_age = date_calculations.chronological_calendar_age(
             birth_date=birth_date,
             observation_date=observation_date)
         click.echo(f"Unadjusted: {decimal_age} y,\n{calendar_age}")
+
 
 @click.command()
 @click.argument('decimal_age', type=click.FLOAT)
@@ -69,7 +86,7 @@ def sds_for_measurement(decimal_age, measurement_method, observation_value, sex,
     The reference is optional - default is UK-WHO\n
     To change the reference pass --reference with one of "uk-who", "trisomy-21", "turners-syndrome"
     """
-    
+
     result = sfm(
         reference=reference,
         age=decimal_age,
@@ -81,6 +98,7 @@ def sds_for_measurement(decimal_age, measurement_method, observation_value, sex,
     cent = centile(result)
     click.echo(f"Reference: {reference_to_string(reference)}")
     click.echo(f"SDS: {result}\nCentile: {round(cent,1)} %\n")
+
 
 @click.command()
 @click.argument('decimal_age', type=click.FLOAT)
@@ -97,7 +115,7 @@ def measurement_for_centile(decimal_age, sex, measurement_method, centile, refer
     centile as a float value,
     To change the reference pass --reference with one of "uk-who", "trisomy-21", "turners-syndrome"
     """
-    
+
     # convert centile to SDS
     sds = stats.norm.ppf(centile / 100)
 
@@ -109,14 +127,16 @@ def measurement_for_centile(decimal_age, sex, measurement_method, centile, refer
         sex=sex,
         age=decimal_age
     )
-    
-    suffix="cm"
-    if measurement_method=="weight":
-        suffix="kg"
-    elif measurement_method=="bmi":
-        suffix="kg/m2"
+
+    suffix = "cm"
+    if measurement_method == "weight":
+        suffix = "kg"
+    elif measurement_method == "bmi":
+        suffix = "kg/m2"
     click.echo(f"Reference: {reference_to_string(reference)}")
-    click.echo(f"SDS {round(sds, 3)}\nCentile: {centile} %\n{measurement_method}: {result} {suffix}")
+    click.echo(
+        f"SDS {round(sds, 3)}\nCentile: {centile} %\n{measurement_method}: {result} {suffix}")
+
 
 @click.command()
 @click.argument('decimal_age', type=click.FLOAT)
@@ -134,20 +154,22 @@ def measurement_for_sds(reference, decimal_age, sex, measurement_method, sds):
     To change the reference pass --reference with one of "uk-who", "trisomy-21", "turners-syndrome"
     """
     result = measurement_from_sds(
-        reference=reference, 
+        reference=reference,
         requested_sds=sds,
         measurement_method=measurement_method,
         sex=sex,
         age=decimal_age
     )
     cent = centile(sds)
-    suffix="cm"
-    if measurement_method=="weight":
-        suffix="kg"
-    elif measurement_method=="bmi":
-        suffix="kg/m2"
+    suffix = "cm"
+    if measurement_method == "weight":
+        suffix = "kg"
+    elif measurement_method == "bmi":
+        suffix = "kg/m2"
     click.echo(f"Reference: {reference_to_string(reference)}")
-    click.echo(f"SDS {sds}\nCentile: {round(cent,3)} %\n{measurement_method}: {result} {suffix}")
+    click.echo(
+        f"SDS {sds}\nCentile: {round(cent,3)} %\n{measurement_method}: {result} {suffix}")
+
 
 @click.command()
 @click.argument("maternal_height", type=click.FLOAT)
