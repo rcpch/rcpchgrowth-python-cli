@@ -1,3 +1,8 @@
+"""
+RCPCHGrowth Command Line Tool
+"""
+
+
 # standard imports
 from datetime import date
 
